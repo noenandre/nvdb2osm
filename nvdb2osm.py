@@ -63,16 +63,16 @@ road_status = {
 }
 
 medium_types = {
-	'T': u'På terrenget/på bakkenivå',
+	'T': 'På terrenget/på bakkenivå',
 	'B': 'I bygning/bygningsmessig anlegg',
 	'L': 'I luft',
 	'U': 'Under terrenget',
-	'S': u'På sjøbunnen',
-	'O': u'På vannoverflaten',
+	'S': 'På sjøbunnen',
+	'O': 'På vannoverflaten',
 	'V': 'Alltid i vann',
 	'D': 'Tidvis under vann',
-	'I': u'På isbre',
-	'W': u'Under sjøbunnen',
+	'I': 'På isbre',
+	'W': 'Under sjøbunnen',
 	'J': 'Under isbre',
 	'X': 'Ukjent'
 }
@@ -308,7 +308,7 @@ def tag_highway (segment, lanes, tags, extras):
 
 	if segment['typeVeg'] in ["Kanalisert veg", "Enkel bilveg"] and \
 			"strekning" in segment['vegsystemreferanse'] and segment['vegsystemreferanse']['strekning']['trafikantgruppe'] == "G" or \
-			segment['typeVeg'] == "Gang- og sykkelveg" and u"topologinivå" in segment and segment[u'topologinivå'] == "KJOREBANE":
+			segment['typeVeg'] == "Gang- og sykkelveg" and "topologinivå" in segment and segment['topologinivå'] == "KJOREBANE":
 		tags[tag_key] = "footway"
 		tags['footway'] = "crossing"
 		tags['bicycle'] = "yes"
@@ -316,10 +316,10 @@ def tag_highway (segment, lanes, tags, extras):
 
 	# Tagging for normal highways (cars)
 
-	elif segment['typeVeg'] in ["Enkel bilveg", "Kanalisert veg", "Rampe", u"Rundkjøring"]:  # Regular highways (excluding "kjørefelt")
+	elif segment['typeVeg'] in ["Enkel bilveg", "Kanalisert veg", "Rampe", "Rundkjøring"]:  # Regular highways (excluding "kjørefelt")
 
 		if "sideanlegg" in segment['vegsystemreferanse'] or \
-				len(lanes) == 1 and "K" in lanes[0] and ref['vegkategori'] in ["E", "R", "F"] and segment[u'detaljnivå'] != u"Kjørebane" and \
+				len(lanes) == 1 and "K" in lanes[0] and ref['vegkategori'] in ["E", "R", "F"] and segment['detaljnivå'] != "Kjørebane" and \
 				(segment['typeVeg'] != "Enkel bilveg" or "kryssystem" in segment['vegsystemreferanse']): # Trafikklommer/rasteplasser
 			tags[tag_key] = "unclassified"
 
@@ -330,19 +330,19 @@ def tag_highway (segment, lanes, tags, extras):
 				tags[tag_key] = road_category[ ref['vegkategori'] ]['tag']
 
 			if ref['vegkategori'] in ["E", "R", "F"]:
-				if segment['typeVeg'] == "Rampe" or segment[u'detaljnivå'] == u"Kjørefelt" and lanes and "H" in lanes[0]:
+				if segment['typeVeg'] == "Rampe" or segment['detaljnivå'] == "Kjørefelt" and lanes and "H" in lanes[0]:
 					tags[tag_key] += "_link"
 				tags['ref'] = get_ref(ref['vegkategori'], ref['nummer'])
 
-		if segment['typeVeg'] == u"Rundkjøring":
+		if segment['typeVeg'] == "Rundkjøring":
 			tags['junction'] = "roundabout"
 
 		if lanes:
 			tags.update (process_lanes (lanes))
-		elif segment[u'detaljnivå'] != "Vegtrase" and segment['typeVeg'] in ["Kanalisert veg", "Rampe", u"Rundkjøring"]:
+		elif segment['detaljnivå'] != "Vegtrase" and segment['typeVeg'] in ["Kanalisert veg", "Rampe", "Rundkjøring"]:
 			tags['oneway'] = "yes"
 
-		if segment[u'detaljnivå'] == u"Kjørefelt" and not (lanes and ("K" in lanes[0] and lanes[0] != "SVKL")): # or "H" in lanes[0])):
+		if segment['detaljnivå'] == "Kjørefelt" and not (lanes and ("K" in lanes[0] and lanes[0] != "SVKL")): # or "H" in lanes[0])):
 #			tags.clear()
 #			tags['FIXME'] = 'Please replace way with "turn:lanes" on main way'
 			if tag_key in tags:
@@ -354,7 +354,7 @@ def tag_highway (segment, lanes, tags, extras):
 
 	# All other highway types
 
-	elif segment['typeVeg'] == u"Gågate":  # Pedestrian street
+	elif segment['typeVeg'] == "Gågate":  # Pedestrian street
 		tags[tag_key] = "pedestrian"
 		tags['bicycle'] = "yes"
 
@@ -421,7 +421,7 @@ def tag_highway (segment, lanes, tags, extras):
 	# Information tags for debugging
 
 	if debug:
-		extras[u"DETALJNIVÅ"] = segment[u'detaljnivå']
+		extras["DETALJNIVÅ"] = segment['detaljnivå']
 		extras["TYPEVEG"] = segment['typeVeg']			
 
 		if lanes:
@@ -430,8 +430,8 @@ def tag_highway (segment, lanes, tags, extras):
 		if medium:
 			extras["MEDIUM"] = "#" + medium + " " + medium_types[ medium ]
 
-		if u"topologinivå" in segment:
-			extras[u"TOPOLOGINIVÅ"] = segment[u'topologinivå']
+		if "topologinivå" in segment:
+			extras["TOPOLOGINIVÅ"] = segment['topologinivå']
 
 		ref = segment['vegsystemreferanse']
 		extras["VEGREFERANSE"] = ref['kortform']
@@ -512,16 +512,16 @@ def tag_object (object_id, properties, tags):
 
 	elif object_id == "856":
 		restrictions = {
-			u'Forbudt for gående og syklende': {'foot': 'no', 'bicycle': 'no'},
+			'Forbudt for gående og syklende': {'foot': 'no', 'bicycle': 'no'},
 			'Forbudt for motortrafikk': {'motor_vehicle': 'no'},
 			'Motortrafikk kun tillatt for varetransport': {'motor_vehicle': 'delivery'},
-			u'Forbudt for gående': {'foot': 'no'},
-			u'Motortrafikk kun tillatt for kjøring til eiendommer': {'motor_vehicle': 'destination'},
+			'Forbudt for gående': {'foot': 'no'},
+			'Motortrafikk kun tillatt for kjøring til eiendommer': {'motor_vehicle': 'destination'},
 			'Forbudt for lastebil og trekkbil': {'hgv': 'no'},
-			u'Motortrafikk kun tillatt for varetransport og kjøring til eiendommer': {'motor_vehicle': 'destination'},
+			'Motortrafikk kun tillatt for varetransport og kjøring til eiendommer': {'motor_vehicle': 'destination'},
 			'Forbudt for lastebil og trekkbil m unntak': {'hgv': 'permissive'},
 			'Forbudt for motorsykkel': {'motorcycle': 'no'},
-			u'Gjennomkjøring forbudt': {'motor_vehicle': 'destination'},
+			'Gjennomkjøring forbudt': {'motor_vehicle': 'destination'},
 			'Forbudt for motorsykkel og moped': {'motorcycle': 'no', 'moped': 'no'},
 			'Forbudt for motortrafikk unntatt buss': {'motor_vehicle': 'no', 'bus': 'yes'},
 			'Forbudt for motortrafikk unntatt buss og taxi': {'motor_vehicle': 'no', 'psv': 'yes'},
@@ -530,11 +530,11 @@ def tag_object (object_id, properties, tags):
 			'Forbudt for motortrafikk unntatt taxi': {'motor_vehicle': 'no', 'taxi': 'yes'},
 			'Forbudt for motortrafikk unntatt varetransport': {'motor_vehicle': 'delivery'},
 			'Forbudt for traktor': {'agriculatural': 'no'},
-			u'Gjennomkjøring forbudt for lastebil og trekkbil': {'hgv': 'destination'},
-			u'Sykling mot kjøreretningen tillatt': {'oneway:bicycle': 'no'},
-			u'Gjennomkjøring forbudt til veg eller gate': {'motor_vehicle': 'destination'},
-			u'Motortrafikk kun tillatt for kjøring til virksomhet eller adresse': {'motor_vehicle': 'destination'},
-			u'Forbudt for alle kjøretøy': {'motor_vehicle': 'no'},
+			'Gjennomkjøring forbudt for lastebil og trekkbil': {'hgv': 'destination'},
+			'Sykling mot kjøreretningen tillatt': {'oneway:bicycle': 'no'},
+			'Gjennomkjøring forbudt til veg eller gate': {'motor_vehicle': 'destination'},
+			'Motortrafikk kun tillatt for kjøring til virksomhet eller adresse': {'motor_vehicle': 'destination'},
+			'Forbudt for alle kjøretøy': {'motor_vehicle': 'no'},
 			'Forbudt for syklende': {'bicycle': 'no'}
 		}
 		if "Trafikkreguleringer" in properties:
@@ -551,20 +551,20 @@ def tag_object (object_id, properties, tags):
 		tags['barrier'] = "cattle_grid"			
 
 	elif object_id == "47":
-		if properties[u'Bruksområde'] == u"Møteplass":
+		if properties['Bruksområde'] == "Møteplass":
 			tags['highway'] = "passing_place"
 
 	elif object_id == "607":  # Vegsperring
 		barriers = {
 			'Betongkjegle': 'bollard',
-			u'Rørgelender': 'cycle_barrier',
+			'Rørgelender': 'cycle_barrier',
 			'Steinblokk': 'block',
 			'New Jersey': 'jersey_barrier',
 			'Bussluse': 'bus_trap',
-			u'Låst bom': 'lift_gate',
+			'Låst bom': 'lift_gate',
 			'Trafikkavviser': 'bollard',
 			'Bilsperre': 'gate',
-			u'Bom med automatisk åpner': 'lift_gate'
+			'Bom med automatisk åpner': 'lift_gate'
 		}
 		if properties['Type'] in barriers:
 			tags['barrier'] = barriers[ properties['Type'] ]
@@ -581,7 +581,7 @@ def tag_object (object_id, properties, tags):
 			tags['crossing'] = "uncontrolled"  # crossing = marked / uncontrolled ?
 		elif properties['Markering av striper'] == "Ikke striper":
 			tags['crossing'] = "unmarked"
-		if properties [u"Trafikkøy"] == "Ja":
+		if properties ["Trafikkøy"] == "Ja":
 			tags['crossing:island'] = "yes"
 
 	elif object_id == "100":
@@ -595,9 +595,9 @@ def tag_object (object_id, properties, tags):
 				tags['crossing'] = "uncontrolled"
 
 	elif object_id == "89":  # Traffic signal
-		if properties[u'Bruksområde'] in ["Vegkryss", "Skyttelsignalanlegg"]:
+		if properties['Bruksområde'] in ["Vegkryss", "Skyttelsignalanlegg"]:
 			tags['highway'] = "traffic_signals"
-		elif properties[u'Bruksområde'] == "Gangfelt":
+		elif properties['Bruksområde'] == "Gangfelt":
 			tags['highway'] = "crossing"
 			tags['crossing'] = "traffic_signals"
 		elif "Navn" in properties:
@@ -615,14 +615,14 @@ def tag_object (object_id, properties, tags):
 				tags['surface'] = "paving_stones"
 			elif properties['Massetype'] == "Tre (bru)":
 				tags['surface'] = "wood"
-			elif properties['Massetype'] == u"Stålgitter (bru)":
+			elif properties['Massetype'] == "Stålgitter (bru)":
 				tags['surface'] = "metal"
 		else:
 			tags['surface'] = "asphalt"
 
 	elif object_id == "591":
-		if u"Skilta høyde" in properties:
-			tags['maxheight'] = str(properties[u'Skilta høyde'])
+		if "Skilta høyde" in properties:
+			tags['maxheight'] = str(properties['Skilta høyde'])
 
 	elif object_id == "904":
 		if "tonn" in properties['Bruksklasse'] and "50 tonn" not in properties['Bruksklasse']:
@@ -1036,7 +1036,7 @@ def traverse_network (segment_id, from_node_id, route, distance, target_segments
 		return (False, distance, route)
 
 	# Segment not permitted for cars
-	if segment['highway'] not in ["Bilveg", "Rampe", u"Rundkjøring", "Gatetun"] and \
+	if segment['highway'] not in ["Bilveg", "Rampe", "Rundkjøring", "Gatetun"] and \
 			not ("motor_vehicle" in segment['tags'] and segment['tags']['motor_vehicle'] != "no") or \
 			"motor_vehicle" in segment['tags'] and segment['tags']['motor_vehicle'] == "no" or \
 			"highway" not in segment['tags'] or "construction" in segment['tags']:
@@ -1280,7 +1280,7 @@ def get_road_object (object_id, **kwargs):
 				elif attribute['navn'] in ["PunktTilknytning", "SvingTilknytning"]:
 					locations = [attribute]
 
-				elif attribute['navn'] == u"Assosierte Tunnelløp":
+				elif attribute['navn'] == "Assosierte Tunnelløp":
 					associated_tunnels = attribute['innhold']
 
 			# Add tags from 1st pass of tunnels
@@ -1329,8 +1329,8 @@ def get_road_object (object_id, **kwargs):
 					if location['veglenkesekvensid'] in parents:
 						if location['stedfestingstype'] == "Linje":
 							if location['startposisjon'] != location['sluttposisjon']:
-								if location[u'kjørefelt']:
-									direction, code = get_direction(location[u'kjørefelt'][0])
+								if location['kjørefelt']:
+									direction, code = get_direction(location['kjørefelt'][0])
 								else:
 									direction = ""
 								update_segments_line (location['veglenkesekvensid'], location['startposisjon'], location['sluttposisjon'], \
@@ -1364,7 +1364,7 @@ def get_road_object (object_id, **kwargs):
 
 def process_road_network (segment):
 
-	if segment[u'detaljnivå'] != "Vegtrase" and \
+	if segment['detaljnivå'] != "Vegtrase" and \
 			("vegsystemreferanse" not in segment or "vegsystem" not in segment['vegsystemreferanse'] or segment['vegsystemreferanse']['vegsystem']['fase'] != "F"):
 
 		tags = {}
@@ -1373,8 +1373,8 @@ def process_road_network (segment):
 
 		# Reverse way if backwards one way street
 
-		if "superstedfesting" in segment and u"kjørefelt" in segment['superstedfesting']:
-			lanes = segment['superstedfesting'][u'kjørefelt']
+		if "superstedfesting" in segment and "kjørefelt" in segment['superstedfesting']:
+			lanes = segment['superstedfesting']['kjørefelt']
 			meter_direction = segment['superstedfesting']['retning']
 		elif "feltoversikt" in segment:
 			lanes = segment['feltoversikt']
@@ -1430,8 +1430,8 @@ def process_road_network (segment):
 			if ref:
 				if "strekning" in ref:
 					extras['STED_SEGMENT'] = "%s %s (%.2fm)" % (segment['kortform'], ref['strekning']['retning'], segment['lengde'])
-					if u"adskilte_løp" in ref['strekning'] and ref['strekning'][u'adskilte_løp'] != "Nei":
-						extras[u'ADSKILTE_LØP'] = "%s %s" % (ref['strekning'][u'adskilte_løp'], ref['strekning'][u'adskilte_løp_nummer'])
+					if "adskilte_løp" in ref['strekning'] and ref['strekning']['adskilte_løp'] != "Nei":
+						extras['ADSKILTE_LØP'] = "%s %s" % (ref['strekning']['adskilte_løp'], ref['strekning']['adskilte_løp_nummer'])
 				else:
 					extras['STED_SEGMENT'] = "%s (%.2fm)" % (segment['kortform'], segment['lengde'])
 			else:
@@ -2067,7 +2067,7 @@ def get_data(url):
 			if "geometri" in record:
 				if "vegobjekt" in url:
 					process_road_object(record)
-				elif "vegnett" in url:  # and record['metadata']['startdato'] > "2020":  # u'måledato' in record and record[u'måledato'] > "2020":
+				elif "vegnett" in url:  # and record['metadata']['startdato'] > "2020":  # 'måledato' in record and record['måledato'] > "2020":
 					process_road_network(record)
 
 		returned = data['metadata']['returnert']
